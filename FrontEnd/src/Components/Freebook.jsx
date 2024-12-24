@@ -1,15 +1,27 @@
-import React from 'react';
-import list from '../../public/list.json';
+import React, { useEffect, useState } from 'react';
+
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import Cards from "../Components/Cards"
-
+import axios from "axios"
 
 function Freebook() {
+  const [book, setBook] = useState([]);
+  useEffect(() =>{
+     const getBook=async()=>{
+      try {
+        const res  = await axios.get("http://localhost:4001/book");//Yaha pr localhost:4001/book route se data uthayege or usko res variable ke andr store krege fir yeh data res me store hojayega or setBook(res.data) wali line ki help se yeh data upr jo useState define kra h line 7 pr vaha book me store hojayega yeh data or issi data ko fir apn neeche line number 32 me map krdenge toh yeh jake apne frontend pr show hone lgega
+        console.log(res.data)
+        setBook(res.data.filter((data) => data.category === "Free"));
+      } catch (error) {
+        console.log(error)
+      }
+     }
+     getBook();
+  }, [])
 
-    const filterData = list.filter((data) => data.category === "Free");
-    // console.log(filterData);
+   
 
     var settings = {
         dots: true,
@@ -58,7 +70,7 @@ function Freebook() {
    
     <div className="slider-container">
       <Slider {...settings}>
-       {filterData.map((item) => (
+       {book.map((item) => (
         <Cards item={item} key={item.id} />
        ))}
     </Slider>
